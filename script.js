@@ -612,26 +612,133 @@ function initAssessment() {
 }
 
 /* ============================================
-   CONTACT FORM
+   CONTACT FORM — Google Sheets Integration
    ============================================ */
+/*
+ * ⚠️ هام: استبدل الرابط أدناه برابط تطبيق الويب (Web App URL)
+ *    الذي تحصل عليه بعد نشر Google Apps Script.
+ *    راجع التعليمات في الخطوة 3 أدناه.
+ */
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxDPP1dXr-6K2S4JUiE1PKFMjDHcUrwoF36HI1aUkJPA2XhnxD2RZvMKYm06ehCEs-PoQ/exec';
+
 function initContactForm() {
     const form = document.getElementById('contact-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
+    const btnIcon = submitBtn.querySelector('.btn-icon');
+
+    // Toast notification helper
+    function showNotification(message, isSuccess = true) {
+        const notification = document.getElementById('form-notification');
+        const notificationText = document.getElementById('notification-text');
+        const notificationIcon = document.getElementById('notification-icon');
+
+        notificationText.textContent = message;
+        notification.classList.remove('show', 'success', 'error');
+
+        // Set icon based on success/error
+        if (isSuccess) {
+            notification.classList.add('success');
+            notificationIcon.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="24" height="24">
+                    <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>`;
+        } else {
+            notification.classList.add('error');
+            notificationIcon.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="24" height="24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>`;
+        }
+
+        // Trigger show
+        requestAnimationFrame(() => {
+            notification.classList.add('show');
+        });
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 5000);
+    }
+
+    // Toggle loading state
+    function setLoading(loading) {
+        if (loading) {
+            btnText.style.display = 'none';
+            btnIcon.style.display = 'none';
+            btnLoading.style.display = 'inline-flex';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+            submitBtn.style.cursor = 'wait';
+        } else {
+            btnText.style.display = '';
+            btnIcon.style.display = '';
+            btnLoading.style.display = 'none';
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '';
+            submitBtn.style.cursor = '';
+        }
+    }
+
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
+        // Check if URL is configured
+        if (GOOGLE_SHEETS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+            showNotification('⚠️ يرجى إعداد رابط Google Apps Script أولاً.', false);
+            console.error(
+                'SOPsMind: لم يتم تعيين رابط Google Apps Script.\n' +
+                'استبدل قيمة GOOGLE_SHEETS_URL في ملف script.js برابط Web App الخاص بك.'
+            );
+            return;
+        }
 
-        btn.innerHTML = '<span>تم الإرسال بنجاح ✓</span>';
-        btn.style.background = 'linear-gradient(135deg, #00F5D4, #00d4b6)';
+        setLoading(true);
 
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = '';
-            form.reset();
-        }, 3000);
+        try {
+            const formData = new FormData(form);
+
+            const response = await fetch(GOOGLE_SHEETS_URL, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok || response.type === 'opaque') {
+                // Google Apps Script redirects often return opaque responses
+                showNotification('✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.', true);
+                form.reset();
+            } else {
+                throw new Error(`HTTP ${response.status}`);
+            }
+        } catch (error) {
+            // For no-cors mode, the fetch may appear to "fail" but actually succeeds.
+            // Google Apps Script web apps typically need no-cors from external domains.
+            // Retry with no-cors if standard fetch fails:
+            try {
+                const formData = new FormData(form);
+
+                await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors',
+                });
+
+                // With no-cors we can't verify the response, but the data was likely sent
+                showNotification('✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.', true);
+                form.reset();
+            } catch (retryError) {
+                console.error('Form submission error:', retryError);
+                showNotification('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', false);
+            }
+        } finally {
+            setLoading(false);
+        }
     });
 }
 

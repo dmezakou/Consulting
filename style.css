@@ -1283,6 +1283,105 @@ h1, h2, h3, h4 {
     color: var(--text-primary);
 }
 
+/* Form Submit Button States */
+#submit-btn {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#submit-btn .btn-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+#submit-btn .spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Form Notification Toast */
+.form-notification {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 28px;
+    border-radius: 16px;
+    background: rgba(15, 15, 25, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.05);
+    z-index: 10000;
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    opacity: 0;
+    direction: rtl;
+    max-width: 90vw;
+}
+
+.form-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.form-notification.success {
+    border-color: rgba(0, 245, 212, 0.3);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 24px rgba(0, 245, 212, 0.1);
+}
+
+.form-notification.error {
+    border-color: rgba(255, 107, 107, 0.3);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 107, 107, 0.1);
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-notification.success .notification-icon {
+    color: var(--accent-primary);
+}
+
+.form-notification.error .notification-icon {
+    color: #ff6b6b;
+}
+
+.notification-text {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .form-notification {
+        top: 16px;
+        padding: 14px 20px;
+        border-radius: 14px;
+        gap: 10px;
+    }
+    .notification-text {
+        font-size: 0.85rem;
+        white-space: normal;
+    }
+}
+
 /* ============================================
    FOOTER
    ============================================ */

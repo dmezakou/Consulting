@@ -815,7 +815,7 @@
                             <span class="system-number">15</span>
                             <div class="system-badge">Flexible Canvases</div>
                         </div>
-                        <h3 class="system-name">نظام السيناريوهات اللزجة</h3>
+                        <h3 class="system-name">نظام السيناريوهات المرنة</h3>
                         <p class="system-desc">بناء نماذج عمل قابلة للتشكل والتغير الفوري لتتكيف مع التقلبات المفاجئة أو
                             العراقيل التي تظهر في بيئة غير مستقرة.</p>
                         <div class="system-action">
@@ -1093,7 +1093,7 @@
                             </svg>
                         </div>
                         <h4>البريد الإلكتروني</h4>
-                        <p>dmezakou@gmail.com</p>
+                        <p>[dmezakou@gmail.com]</p>
                     </div>
                     <div class="info-card">
                         <div class="info-icon">
@@ -1119,15 +1119,15 @@
                 </div>
                 <form class="contact-form" id="contact-form">
                     <div class="form-group">
-                        <input type="text" id="name" placeholder="الاسم الكامل" required>
+                        <input type="text" id="name" name="name" placeholder="الاسم الكامل" required>
                         <label for="name">الاسم الكامل</label>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+                        <input type="email" id="email" name="email" placeholder="البريد الإلكتروني" required>
                         <label for="email">البريد الإلكتروني</label>
                     </div>
                     <div class="form-group">
-                        <select id="service" required>
+                        <select id="service" name="service" required>
                             <option value="" disabled selected>اختر الخدمة</option>
                             <option value="individual">استشارة فردية</option>
                             <option value="corporate">تدريب مؤسسي</option>
@@ -1137,17 +1137,34 @@
                         <label for="service">نوع الخدمة</label>
                     </div>
                     <div class="form-group">
-                        <textarea id="message" rows="4" placeholder="رسالتك" required></textarea>
+                        <textarea id="message" name="message" rows="4" placeholder="رسالتك" required></textarea>
                         <label for="message">رسالتك</label>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-full">
-                        <span>إرسال الطلب</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
+                        <span class="btn-text">إرسال الطلب</span>
+                        <span class="btn-loading" style="display:none;">
+                            <svg class="spinner" viewBox="0 0 24 24" width="20" height="20">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"
+                                    stroke-dasharray="31.4 31.4" stroke-linecap="round" />
+                            </svg>
+                            جارٍ الإرسال...
+                        </span>
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="22" y1="2" x2="11" y2="13" />
                             <polygon points="22,2 15,22 11,13 2,9" />
                         </svg>
                     </button>
                 </form>
+                <!-- Form Notification Toast -->
+                <div class="form-notification" id="form-notification">
+                    <div class="notification-icon" id="notification-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="24"
+                            height="24">
+                            <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <span class="notification-text" id="notification-text"></span>
+                </div>
             </div>
         </div>
     </section>
@@ -1192,7 +1209,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026  جميع الحقوق محفوظة - MEZA-NE SOPs </p>
+                <p>جميع الحقوق محفوظة © 2026 - SOPsMind </p>
             </div>
         </div>
     </footer>
